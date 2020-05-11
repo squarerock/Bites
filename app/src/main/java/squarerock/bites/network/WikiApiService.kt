@@ -25,10 +25,11 @@ interface WikiApiService {
         @Query("format") format: String = "json",
         @Query("prop") prop: String = "extracts",
         @Query("formatversion") formatversion: Int = 2,
-        @Query("exlimit") exlimit: Int = 1,
+        @Query("exlimit") exlimit: String = "max",
         @Query("explaintext") explainText: Int = 1,
         @Query("exsentences") exsentences: Int = 10,
-        @Query("titles") title: String
+        @Query("titles") title: String,
+        @Query("redirects") redirects: String = ""
     ): Call<WikiModelExtract.Result>
 
     companion object {
