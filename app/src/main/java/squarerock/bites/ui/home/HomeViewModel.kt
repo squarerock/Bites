@@ -56,14 +56,8 @@ class HomeViewModel : ViewModel() {
             return
         }
 
-        val sb = StringBuilder()
-        titles.forEach {
-            sb.append(it)
-            sb.append("|")
-        }
-
         wikiApiService.getExtract(
-            title = sb.toString()
+            title = titles[0]
         ).enqueue(object : Callback<WikiModelExtract.Result>{
             override fun onFailure(call: Call<WikiModelExtract.Result>, t: Throwable) {
                 TODO("Not yet implemented")
@@ -73,8 +67,9 @@ class HomeViewModel : ViewModel() {
                 call: Call<WikiModelExtract.Result>,
                 response: Response<WikiModelExtract.Result>
             ) {
-                response.body()?.let {
+                response.body()?.let { it ->
                     Log.d(TAG, "onResponse: Implement UI update here")
+                    _articleExtracts.value = it.query.pages.map { it.extract }
                 }
             }
 

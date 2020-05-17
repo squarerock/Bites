@@ -27,9 +27,9 @@ interface WikiApiService {
         @Query("formatversion") formatversion: Int = 2,
         @Query("exlimit") exlimit: String = "max",
         @Query("explaintext") explainText: Int = 1,
-        @Query("exsentences") exsentences: Int = 10,
+        @Query("exsentences") exsentences: Int = 20,
         @Query("titles") title: String,
-        @Query("redirects") redirects: String = ""
+        @Query("redirects") redirects: Int = 1
     ): Call<WikiModelExtract.Result>
 
     companion object {
