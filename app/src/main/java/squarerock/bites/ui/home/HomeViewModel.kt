@@ -34,7 +34,7 @@ class HomeViewModel : ViewModel() {
         fetchRandomArticles()
     }
 
-    private fun fetchRandomArticles(limit: Int = 1) {
+    fun fetchRandomArticles(limit: Int = 1) {
         wikiApiService.getRandom(
             limit = limit
         ).enqueue(object: Callback<WikiModelRandom.Result> {

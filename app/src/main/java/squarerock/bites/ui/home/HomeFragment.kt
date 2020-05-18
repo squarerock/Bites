@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat.getColor
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import squarerock.bites.R
 
 class HomeFragment : Fragment() {
@@ -20,6 +21,7 @@ class HomeFragment : Fragment() {
     private lateinit var tvTitle: TextView
     private lateinit var tvExtract: TextView
     private lateinit var btnLearnMore: Button
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -27,6 +29,7 @@ class HomeFragment : Fragment() {
             savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.fragment_home, container, false)
+        swipeRefreshLayout = root.findViewById(R.id.home_container)
         tvTitle = root.findViewById(R.id.tvTitle)
         tvExtract = root.findViewById(R.id.tvExtract)
         btnLearnMore = root.findViewById(R.id.btnLearnMore)
@@ -34,6 +37,11 @@ class HomeFragment : Fragment() {
         homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
         homeViewModel.randomArticles.observe(viewLifecycleOwner, randomArticlesObserver)
         homeViewModel.articleExtracts.observe(viewLifecycleOwner, articleExtractsObserver)
+
+        swipeRefreshLayout.setOnRefreshListener {
+            homeViewModel.fetchRandomArticles()
+            swipeRefreshLayout.isRefreshing = false
+        }
 
         btnLearnMore.setOnClickListener {
             val baseUrl = "https://en.wikipedia.org/wiki/"
