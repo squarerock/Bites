@@ -20,6 +20,9 @@ class HomeViewModel : ViewModel() {
     private val _articleExtracts = MutableLiveData<List<String>>()
     val articleExtracts: LiveData<List<String>> = _articleExtracts
 
+    private val _sourceUrl = MutableLiveData<String>()
+    val sourceUrl: LiveData<String> = _sourceUrl
+
     private val TAG = "HomeViewModel"
 
     private val wikiApiService by lazy {
