@@ -7,7 +7,7 @@ Bites queries Wikipedia for a random list of articles, summarizes them and provi
 ## Enhancements in current features
 - [ ] Configure the number of articles to be summarized
 
-- [ ] Integrate custom tabs to load entire article
+- [x] Integrate custom tabs to load entire article
 
 - [ ] Beautify the UI
   - [ ] Home tab
