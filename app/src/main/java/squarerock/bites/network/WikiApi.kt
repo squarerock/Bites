@@ -1,26 +1,26 @@
 package squarerock.bites.network
 
-import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
+import squarerock.bites.Constants
 import squarerock.bites.models.WikiModelExtract
 import squarerock.bites.models.WikiModelRandom
 
-interface WikiApiService {
+interface WikiApi {
 
     @GET("api.php")
-    fun getRandom(
+    suspend fun getRandomArticles(
         @Query("action") action: String = "query",
         @Query("format") format: String = "json",
         @Query("list") list: String = "random",
         @Query("rnnamespace") rnnamespace: Int = 0,
         @Query("rnlimit") limit: Int
-    ): Call<WikiModelRandom.Result>
+    ): WikiModelRandom.Result
 
     @GET("api.php")
-    fun getExtract(
+    suspend fun getArticleExtracts(
         @Query("action") action: String = "query",
         @Query("format") format: String = "json",
         @Query("prop") prop: String = "extracts",
@@ -30,17 +30,16 @@ interface WikiApiService {
         @Query("exsentences") exsentences: Int = 20,
         @Query("titles") title: String,
         @Query("redirects") redirects: Int = 1
-    ): Call<WikiModelExtract.Result>
+    ): WikiModelExtract.Result
 
     companion object {
-        fun create(): WikiApiService {
-            val baseUrl = "https://en.wikipedia.org/w/"
+        fun create(): WikiApi {
             val retrofit = Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())
-                .baseUrl(baseUrl)
+                .baseUrl(Constants.WIKIPEDIA_BASE_URL)
                 .build()
 
-            return retrofit.create(WikiApiService::class.java)
+            return retrofit.create(WikiApi::class.java)
         }
     }
 }
