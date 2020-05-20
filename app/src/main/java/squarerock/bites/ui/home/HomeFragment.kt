@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat.getColor
 import androidx.fragment.app.Fragment
@@ -17,6 +18,7 @@ import squarerock.bites.Constants
 import squarerock.bites.R
 import squarerock.bites.network.WikiApi
 import squarerock.bites.network.WikiApiService
+import squarerock.bites.network.utils.Resource
 
 class HomeFragment : Fragment() {
 
@@ -26,13 +28,25 @@ class HomeFragment : Fragment() {
     private lateinit var btnLearnMore: Button
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
-    private val randomArticlesObserver = Observer<List<String>> {
-        getExtracts(it)
-        tvTitle.text = it[0]
+    private val randomArticlesObserver = Observer<Resource<List<String>>> {
+        Resource.handle(it, onSuccess = {
+            it.data?.let { titles ->
+                getExtracts(titles)
+                tvTitle.text = titles[0]
+            }
+        }, onError = {
+            Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+        })
     }
 
-    private val articleExtractsObserver = Observer<List<String>> {
-        tvExtract.text = it[0]
+    private val articleExtractsObserver = Observer<Resource<List<String>>> {
+        Resource.handle(it, onSuccess = {
+            it.data?.let { extracts ->
+                tvExtract.text = extracts[0]
+            }
+        }, onError = {
+            Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+        })
     }
 
     override fun onCreateView(
