@@ -1,16 +1,10 @@
 package squarerock.bites.data
 
-import squarerock.bites.network.WikiApi
+import squarerock.bites.network.WikiApiService
 
-class WikiRepository {
+class WikiRepository(private val wikiApiService: WikiApiService) {
 
-    private val wikiApiService by lazy {
-        WikiApi.create()
-    }
+    suspend fun fetchArticles(limit: Int = 1) = wikiApiService.getTitles(limit = limit)
 
-    suspend fun fetchRandomArticles(limit: Int = 1)
-            = wikiApiService.getRandomArticles(limit = limit)
-
-    suspend fun fetchArticleExtracts(titles: List<String>)
-        = wikiApiService.getArticleExtracts(title = titles[0])
+    suspend fun fetchExtracts(titles: List<String>) = wikiApiService.getExtracts(title = titles[0])
 }

@@ -15,7 +15,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import squarerock.bites.Constants
 import squarerock.bites.R
-import squarerock.bites.data.WikiRepository
+import squarerock.bites.network.WikiApi
+import squarerock.bites.network.WikiApiService
 
 class HomeFragment : Fragment() {
 
@@ -25,9 +26,8 @@ class HomeFragment : Fragment() {
     private lateinit var btnLearnMore: Button
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
-
     private val randomArticlesObserver = Observer<List<String>> {
-        getRandomExtractsAsync(it)
+        getExtracts(it)
         tvTitle.text = it[0]
     }
 
@@ -41,19 +41,20 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.fragment_home, container, false)
+        setupViews(root)
+        setupViewModel()
+        getArticles()
+        return root
+    }
+
+    private fun setupViews(root: View) {
         swipeRefreshLayout = root.findViewById(R.id.home_container)
         tvTitle = root.findViewById(R.id.tvTitle)
         tvExtract = root.findViewById(R.id.tvExtract)
         btnLearnMore = root.findViewById(R.id.btnLearnMore)
 
-        val homeViewModelFactory =
-            HomeViewModelFactory(WikiRepository())
-        homeViewModel = ViewModelProvider(this, homeViewModelFactory).get(
-            HomeViewModel::class.java
-        )
-
         swipeRefreshLayout.setOnRefreshListener {
-            getRandomArticlesAsync()
+            getArticles()
             swipeRefreshLayout.isRefreshing = false
         }
 
@@ -61,20 +62,20 @@ class HomeFragment : Fragment() {
             val url = Constants.WIKIPEDIA_ARTICLE_BASE_URL + tvTitle.text
             launchLearnMore(url)
         }
-
-        getRandomArticlesAsync()
-
-        return root
     }
 
-    private fun getRandomArticlesAsync() {
-        homeViewModel.getRandomArticles().observe(this, randomArticlesObserver)
+    private fun setupViewModel() {
+        homeViewModel = ViewModelProvider(
+            this,
+            HomeViewModelFactory(WikiApiService(WikiApi.create()))
+        ).get(HomeViewModel::class.java)
     }
 
-    private fun getRandomExtractsAsync(titles: List<String>) {
-        homeViewModel.getArticleExtracts(titles)
-            .observe(viewLifecycleOwner, articleExtractsObserver)
-    }
+    private fun getArticles() =
+        homeViewModel.getTitles().observe(this, randomArticlesObserver)
+
+    private fun getExtracts(titles: List<String>) =
+        homeViewModel.getExtracts(titles).observe(viewLifecycleOwner, articleExtractsObserver)
 
     private fun launchLearnMore(url: String) {
         val builder = CustomTabsIntent.Builder()

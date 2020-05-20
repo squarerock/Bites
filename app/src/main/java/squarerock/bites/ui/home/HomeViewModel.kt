@@ -8,15 +8,15 @@ import squarerock.bites.data.WikiRepository
 
 class HomeViewModel(private val wikiRepository: WikiRepository) : ViewModel() {
 
-    fun getRandomArticles(limit: Int = 1) = liveData(Dispatchers.IO) {
+    fun getTitles(limit: Int = 1) = liveData(Dispatchers.IO) {
         emit(
-            wikiRepository.fetchRandomArticles(limit).query.random.map { it.title }
+            wikiRepository.fetchArticles(limit).query.random.map { it.title }
         )
     }
 
-    fun getArticleExtracts(titles: List<String>) = liveData(Dispatchers.IO) {
+    fun getExtracts(titles: List<String>) = liveData(Dispatchers.IO) {
         emit(
-            wikiRepository.fetchArticleExtracts(titles).query.pages.map { it.extract }
+            wikiRepository.fetchExtracts(titles).query.pages.map { it.extract }
         )
     }
 }
