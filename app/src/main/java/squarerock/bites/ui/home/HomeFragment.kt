@@ -12,17 +12,16 @@ import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat.getColor
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import org.koin.android.viewmodel.ext.android.viewModel
 import squarerock.bites.Constants
 import squarerock.bites.R
-import squarerock.bites.network.WikiApi
-import squarerock.bites.network.WikiApiService
 import squarerock.bites.network.utils.Resource
 
 class HomeFragment : Fragment() {
 
-    private lateinit var homeViewModel: HomeViewModel
+    private val homeViewModel by viewModel<HomeViewModel>()
+
     private lateinit var tvTitle: TextView
     private lateinit var tvExtract: TextView
     private lateinit var btnLearnMore: Button
@@ -56,7 +55,6 @@ class HomeFragment : Fragment() {
     ): View? {
         val root = inflater.inflate(R.layout.fragment_home, container, false)
         setupViews(root)
-        setupViewModel()
         getArticles()
         return root
     }
@@ -76,13 +74,6 @@ class HomeFragment : Fragment() {
             val url = Constants.WIKIPEDIA_ARTICLE_BASE_URL + tvTitle.text
             launchLearnMore(url)
         }
-    }
-
-    private fun setupViewModel() {
-        homeViewModel = ViewModelProvider(
-            this,
-            HomeViewModelFactory(WikiApiService(WikiApi.create()))
-        ).get(HomeViewModel::class.java)
     }
 
     private fun getArticles() =
